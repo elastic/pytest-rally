@@ -70,7 +70,7 @@ def pytest_cmdline_main(config):
     config.option.track_revision = rev
 
 def validate_options(config):
-    if config.option.distribution_version and config.option.es_revision:
+    if config.option.distribution_version and config.option.revision:
         pytest.fail(msg="--distribution-version and --es-revision are mutually exclusive.", pytrace=False)
 
 def configure_markers(config):
