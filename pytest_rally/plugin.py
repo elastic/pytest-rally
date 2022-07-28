@@ -15,6 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import os
+
 import pytest
 
 from pytest_rally.process import run_command_with_output
@@ -55,17 +57,9 @@ def pytest_addoption(parser):
 
 @pytest.hookimpl
 def pytest_cmdline_main(config):
-    # def current_branch(repo):
-    #     # This works around `git branch --show-current` not being available
-    #     # in older versions of Git
-    #     cmd = f'git -C {repo} branch'
-    #     branches = run_command_with_output(cmd).split("\n")
-    #     current = next(filter(lambda b: b.startswith("*"), branches))
-    #     return current.split()[1]
-
     def current_branch(repo):
         cmd = f'git -C {repo} branch --show-current'
-        return run_command_with_output(cmd).rstrip()
+        return os.getenv("GITHUB_SHA", run_command_with_output(cmd).rstrip())
 
     repo = config.getoption("--track-repository", str(config.rootdir))
     rev = config.getoption("--track-revision", current_branch(repo))
