@@ -55,8 +55,11 @@ def generate_command_line(f):
     def wrapper(self, *args, **kwargs):
         sig = inspect.signature(f).bind(self, *args, **kwargs)
         sig.apply_defaults()
-        if kwargs.get("cmdline") is None:
+        cmdline = kwargs.get("cmdline")
+        if cmdline is None:
             kwargs["cmdline"] = command_for_func(f, **sig.kwargs)
+        elif not cmdline.startswith("esrally"):
+            raise AssertionError(f"Command must begin with 'esrally': [{cmdline}]")
         return f(self, *args, **kwargs)
     return wrapper
 
