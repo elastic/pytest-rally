@@ -39,7 +39,7 @@ def make_conftest(pytester, repo):
     import pytest
 
     def pytest_addoption(parser):
-        group = parser.getgroup("esrally")
+        group = parser.getgroup("rally")
         group.addoption("--track-repository", action="store", default=None)
         group.addoption("--track-revision", action="store", default="master")
     """

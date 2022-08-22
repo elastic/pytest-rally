@@ -24,7 +24,7 @@ from pytest_rally.fixtures import *
 
 @pytest.hookimpl
 def pytest_addoption(parser):
-    group = parser.getgroup('esrally')
+    group = parser.getgroup('rally')
     group.addoption("--generate-tests-for-class",
                     action="store",
                     dest="test_class",
