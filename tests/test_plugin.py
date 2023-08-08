@@ -29,7 +29,7 @@ def test_runs_correct_race_commands(caplog, temp_repo, run):
     def expected_log_line(track, challenge):
         command = (
             f'esrally race --track="{track}" --challenge="{challenge}" '
-            f'--track-repository="{temp_repo}" --track-revision="master" '
+            f'--track-repository="{temp_repo}" --track-revision="main" '
             '--configuration-name="pytest" --enable-assertions --kill-running-processes '
             '--on-error="abort" --pipeline="benchmark-only" --target-hosts="127.0.0.1:19200" --test-mode'
         )
