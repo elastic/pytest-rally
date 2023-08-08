@@ -45,3 +45,14 @@ def test_runs_correct_race_commands(caplog, temp_repo, run):
     res = run()
     actual = [(r.name, r.levelname, r.message) for r in caplog.records if "esrally race" in r.message]
     assert actual == expected
+
+def test_runs_correct_install_command(caplog, temp_repo, run):
+    expected = [
+        ("pytest_rally.elasticsearch", "DEBUG", 'Installing Elasticsearch: '
+         '[esrally install --quiet --http-port=19200 --node=rally-node --master-nodes=rally-node '
+         '--car=4gheap,trial-license,x-pack-ml,lean-watermarks --seed-hosts="127.0.0.1:19300" '
+         '--revision=current]')
+    ]
+    res = run()
+    actual = [(r.name, r.levelname, r.message) for r in caplog.records if "esrally install" in r.message]
+    assert actual == expected
