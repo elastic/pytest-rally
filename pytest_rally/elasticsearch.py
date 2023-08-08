@@ -32,7 +32,7 @@ class TestCluster:
                  revision="current",
                  http_port=19200,
                  node_name="rally-node",
-                 car="4gheap,trial-license,x-pack-ml",
+                 car="4gheap,trial-license,x-pack-ml,lean-watermarks",
                  debug=False):
         self.installation_id = None
         self.distribution_version = distribution_version
