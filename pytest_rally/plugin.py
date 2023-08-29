@@ -62,9 +62,9 @@ def pytest_cmdline_main(config):
         branches = run_command_with_output(cmd).split("\n")
         current = next(filter(lambda b: b.startswith("*"), branches))
         if "detached" in current:
-            return run_command_with_output(f'git -C {repo} rev-parse HEAD')
+            return run_command_with_output(f'git -C {repo} rev-parse HEAD').rstrip("\n")
         else:
-            return current.split()[1]
+            return current.split()[1].strip()
 
     repo = config.getoption("--track-repository", str(config.rootdir))
     rev = config.getoption("--track-revision", current_branch(repo))
