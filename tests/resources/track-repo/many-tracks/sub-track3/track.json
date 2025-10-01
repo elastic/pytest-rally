@@ -9,7 +9,7 @@
   ],
   "corpora": [
     {
-      "name": "test-track3",
+      "name": "sub-track3",
       "documents": [
         {
           "source-file": "documents.json",
