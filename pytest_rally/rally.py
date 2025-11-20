@@ -89,7 +89,10 @@ class Rally():
 
     def delete_config_file(self):
         self.logger.info("Removing Rally config from [%s]", self.config_location)
-        os.remove(self.config_location)
+        try:
+            os.remove(self.config_location)
+        except FileNotFoundError:
+            self.logger.warning("Rally config file not found at [%s]", self.config_location)
 
     def set_revision(self):
         self.revision = process.run_command_with_output(f"esrally --version").rstrip()
