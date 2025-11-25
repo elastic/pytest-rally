@@ -22,19 +22,24 @@ import shlex
 import socket
 import subprocess
 import time
-
-from pytest_rally import process
 import uuid
 
+from pytest_rally import process
+
+DEFAULT_CAR = "4gheap,trial-license,x-pack-ml,lean-watermarks"
+
+
 class TestCluster:
-    def __init__(self,
-                 distribution_version=None,
-                 revision=None,
-                 source_build_release=False,
-                 http_port=19200,
-                 node_name="rally-node",
-                 car="4gheap,trial-license,x-pack-ml,lean-watermarks",
-                 debug=False):
+    def __init__(
+        self,
+        distribution_version=None,
+        revision=None,
+        source_build_release=False,
+        http_port=19200,
+        node_name="rally-node",
+        car=DEFAULT_CAR,
+        debug=False,
+    ):
         self.installation_id = None
         self.distribution_version = distribution_version
         self.revision = "current" if not revision else revision
@@ -63,13 +68,17 @@ class TestCluster:
             except Exception:
                 pass
 
-            raise TimeoutError(f"Port [{self.http_port}] is occupied after [{timeout}] seconds")
+            raise TimeoutError(
+                f"Port [{self.http_port}] is occupied after [{timeout}] seconds"
+            )
 
     def install(self):
-        cmd = (f"esrally install --quiet "
-               f"--http-port={self.http_port} --node={self.node_name} "
-               f"--master-nodes={self.node_name} --car={self.car} "
-               f'--seed-hosts="127.0.0.1:{self.transport_port}"')
+        cmd = (
+            f"esrally install --quiet "
+            f"--http-port={self.http_port} --node={self.node_name} "
+            f"--master-nodes={self.node_name} --car={self.car} "
+            f'--seed-hosts="127.0.0.1:{self.transport_port}"'
+        )
 
         if self.distribution_version is not None:
             cmd += f" --distribution-version={self.distribution_version}"
@@ -93,7 +102,7 @@ class TestCluster:
 
     def start(self):
         race = str(uuid.uuid4())
-        cmd = f'esrally start --runtime-jdk=bundled --installation-id={self.installation_id} --race-id={race}'
+        cmd = f"esrally start --runtime-jdk=bundled --installation-id={self.installation_id} --race-id={race}"
         self.logger.info("Starting Elasticsearch: [%s]", cmd)
         if self.debug:
             return
