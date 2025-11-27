@@ -17,23 +17,28 @@
 
 import pytest
 
-from pytest_rally.elasticsearch import TestCluster
-from pytest_rally.rally import Rally
+from pytest_rally.elasticsearch import DEFAULT_CAR, TestCluster
+
 
 @pytest.fixture(scope="module")
 def distribution_version(request):
     return request.config.option.distribution_version
 
+
 @pytest.fixture(scope="module")
 def revision(request):
-    # revision has the peculiarity of being None by default, to facilitate the validation of 
+    # revision has the peculiarity of being None by default, to facilitate the validation of
     # mutually exclusive options in pytest_addoption. However, we want to set that to "current"
     # to match Rally's default behavior, if not provided by the user.
-    return request.config.option.revision if request.config.option.revision else "current"
+    return (
+        request.config.option.revision if request.config.option.revision else "current"
+    )
+
 
 @pytest.fixture(scope="module")
 def source_build_release(request):
     return request.config.option.source_build_release
+
 
 @pytest.fixture(scope="module")
 def rally(request):
@@ -41,12 +46,22 @@ def rally(request):
     yield r
     r.delete_config_file()
 
+
 @pytest.fixture(scope="module", autouse=False)
 def es_cluster(request, distribution_version, revision, source_build_release):
     dist = distribution_version
     rev = revision
     debug = request.config.option.debug_rally
-    cluster = TestCluster(distribution_version=dist, revision=rev, source_build_release=source_build_release, debug=debug)
+    car = DEFAULT_CAR
+    if car_marker := request.node.get_closest_marker("es_cluster_car"):
+        car = car_marker.args[0]
+    cluster = TestCluster(
+        distribution_version=dist,
+        revision=rev,
+        source_build_release=source_build_release,
+        car=car,
+        debug=debug,
+    )
     cluster.install()
     cluster.start()
     yield cluster
