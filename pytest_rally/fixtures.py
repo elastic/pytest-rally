@@ -40,7 +40,7 @@ def source_build_release(request):
     return request.config.option.source_build_release
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def rally(request):
     r = request.config.option.rally
     yield r
