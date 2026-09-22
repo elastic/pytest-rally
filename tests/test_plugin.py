@@ -15,10 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import pytest
 import re
+from pathlib import Path
+
+import pytest
 
 from pytest_rally.elasticsearch import DEFAULT_CAR
+from pytest_rally.rally import CONFIG_NAME, RALLY_CONFIG_DIR
 
 # metafunc.parametrize returns this string when given an empty list. 
 # Ref1: https://github.com/elastic/pytest-rally/blob/60042c441fc0ca2d6aafe0e298fd7f08e3c30334/pytest_rally/plugin.py#L134
@@ -36,6 +39,33 @@ class TestPlugin:
         ]
         generated, _ = pytester.inline_genitems(example["all_tracks_and_challenges"], f"--track-repository={temp_repo}")
         assert [func.name for func in generated] == expected
+
+    def test_rally_config_lives_for_entire_session(self, pytester):
+        pytester.makepyfile(
+            test_first="""
+                from pathlib import Path
+
+                def test_config_exists(rally):
+                    assert Path(rally.config_location).exists()
+            """,
+            test_second="""
+                from pathlib import Path
+
+                def test_config_still_exists(rally):
+                    assert Path(rally.config_location).exists()
+            """,
+        )
+
+        result = pytester.runpytest(
+            "--debug-rally",
+            f"--track-repository={pytester.path}",
+            "--track-revision=main",
+            "test_first.py",
+            "test_second.py",
+        )
+
+        result.assert_outcomes(passed=2)
+        assert not Path(RALLY_CONFIG_DIR).joinpath(f"rally-{CONFIG_NAME}.ini").exists()
 
     def test_runs_correct_race_commands(self, caplog, temp_repo, run, example):
         def expected_log_line(track, challenge):
