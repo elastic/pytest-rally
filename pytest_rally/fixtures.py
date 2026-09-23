@@ -40,7 +40,9 @@ def source_build_release(request):
     return request.config.option.source_build_release
 
 
-@pytest.fixture(scope="module")
+# pytest_configure creates one Rally configuration for the entire test session.
+# Keep it available to every test module and remove it only after the session ends.
+@pytest.fixture(scope="session")
 def rally(request):
     r = request.config.option.rally
     yield r
