@@ -92,12 +92,15 @@ class TestPlugin:
         "distribution_version,revision,source_build_release,cli_opts,expected_fragment",
         [
             ("8.15.0", None, False, "--distribution-version=8.15.0", "--distribution-version=8.15.0"),
+            ("9.7.0-SNAPSHOT", None, False, "--distribution-version=9.7.0-SNAPSHOT --distribution-repository=snapshot",
+             "--distribution-version=9.7.0-SNAPSHOT --distribution-repository=snapshot"),
             (None, "deadbeef", False, "--revision=deadbeef", "--revision=deadbeef"),
             (None, "cafebabe", True, "--revision=cafebabe --source-build-release", "--revision=cafebabe --source-build-release"),
             (None, "current", False, "--revision=current", "--revision=current"),
         ],
         ids=[
             "distribution_version",
+            "distribution_version_with_repository",
             "revision_only",
             "revision_with_source_build_release",
             "revision_current_default",
@@ -117,7 +120,7 @@ class TestPlugin:
             )
         ]
 
-        run(example["all_tracks_and_challenges"], cli_opts)
+        run(example["all_tracks_and_challenges"], *cli_opts.split())
         actual = [
             (r.name, r.levelname, r.message)
             for r in caplog.records
@@ -205,3 +208,9 @@ class TestPlugin:
         installs = [r for r in caplog.records if "esrally install" in r.message]
         assert len(installs) == 1
         assert f"--car=4gheap,trial-license,lean-watermarks" in installs[0].message
+
+    def test_distribution_repository_requires_distribution_version(self, temp_repo, run, example):
+        res = run(example["all_tracks_and_challenges"], "--distribution-repository=snapshot")
+        assert res.ret != 0
+        output = "\n".join(res.outlines + res.errlines)
+        assert "--distribution-repository requires --distribution-version" in output

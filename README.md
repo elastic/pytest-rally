@@ -291,6 +291,8 @@ This fixture installs Elasticsearch during setup, yields a [`TestCluster` object
 
 To install a specific released version of Elasticsearch, use the plugin's `--distribution-version` option, which maps directly to the equivalent [Rally option](https://esrally.readthedocs.io/en/stable/command_line_reference.html#distribution-version).
 
+To install a snapshot (or any other non-release) build, add `--distribution-repository=<name>`, which maps to the [Rally option](https://esrally.readthedocs.io/en/stable/command_line_reference.html#distribution-repository) of the same name. The repository must be defined in the `[distributions]` section of `~/.rally/rally.ini`, e.g. `--distribution-version=9.7.0-SNAPSHOT --distribution-repository=snapshot`.
+
 To build a specific revision of Elasticsearch from source, use the plugin's `--revision` option, which also maps to the [Rally equivalent](https://esrally.readthedocs.io/en/stable/command_line_reference.html#revision).
 
 Note that state (indices, settings, etc.) is not reset between tests.
