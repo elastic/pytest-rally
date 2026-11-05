@@ -26,6 +26,11 @@ def distribution_version(request):
 
 
 @pytest.fixture(scope="module")
+def distribution_repository(request):
+    return request.config.option.distribution_repository
+
+
+@pytest.fixture(scope="module")
 def revision(request):
     # revision has the peculiarity of being None by default, to facilitate the validation of
     # mutually exclusive options in pytest_addoption. However, we want to set that to "current"
@@ -50,7 +55,7 @@ def rally(request):
 
 
 @pytest.fixture(scope="module", autouse=False)
-def es_cluster(request, distribution_version, revision, source_build_release):
+def es_cluster(request, distribution_version, distribution_repository, revision, source_build_release):
     dist = distribution_version
     rev = revision
     debug = request.config.option.debug_rally
@@ -59,6 +64,7 @@ def es_cluster(request, distribution_version, revision, source_build_release):
         car = car_marker.args[0]
     cluster = TestCluster(
         distribution_version=dist,
+        distribution_repository=distribution_repository,
         revision=rev,
         source_build_release=source_build_release,
         car=car,

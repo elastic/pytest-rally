@@ -33,6 +33,7 @@ class TestCluster:
     def __init__(
         self,
         distribution_version=None,
+        distribution_repository=None,
         revision=None,
         source_build_release=False,
         http_port=19200,
@@ -42,6 +43,7 @@ class TestCluster:
     ):
         self.installation_id = None
         self.distribution_version = distribution_version
+        self.distribution_repository = distribution_repository
         self.revision = "current" if not revision else revision
         self.source_build_release = source_build_release
         self.http_port = http_port
@@ -82,6 +84,8 @@ class TestCluster:
 
         if self.distribution_version is not None:
             cmd += f" --distribution-version={self.distribution_version}"
+            if self.distribution_repository is not None:
+                cmd += f" --distribution-repository={self.distribution_repository}"
         else:
             cmd += f" --revision={self.revision}"
             if self.source_build_release is True:

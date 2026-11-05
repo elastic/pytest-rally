@@ -37,6 +37,13 @@ def pytest_addoption(parser):
                     help=("Download and run tests with a specific ES release\n"
                           "(default: None)\n"
                           "(mutually exclusive with: `--revision`)"))
+    group.addoption("--distribution-repository",
+                    action="store",
+                    default=None,
+                    help=("Name of the Rally distribution repository to download --distribution-version from,\n"
+                          "e.g. a snapshot repository defined in the [distributions] section of rally.ini\n"
+                          "(default: None, i.e. Rally's default `release` repository)\n"
+                          "(requires: `--distribution-version`)"))
     group.addoption("--revision",
                     action="store",
                     default=None,
@@ -105,6 +112,8 @@ def validate_options(config):
         pytest.fail(msg="--distribution-version and --revision are mutually exclusive.", pytrace=False)
     if config.option.distribution_version and config.option.source_build_release:
         pytest.fail(msg="--distribution-version and --source-build-release are mutually exclusive.", pytrace=False)
+    if config.option.distribution_repository and not config.option.distribution_version:
+        pytest.fail(msg="--distribution-repository requires --distribution-version.", pytrace=False)
     # If none of distribution_version and revision are provided, we default revision to "current", 
     # so --source-build-release alone is applicable
 
